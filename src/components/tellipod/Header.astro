@@ -1,0 +1,146 @@
+---
+import {MEE_ORIGIN, discord, githubLink} from '../../tellipod';
+import meeLogo from '@assets/tellipod/mee-logo.svg';
+import headerLine from '@assets/tellipod/header-line.svg';
+import Icon from './Icon.astro';
+import {themed} from '../../tellipod-theme';
+---
+
+<header class="tp-header">
+  <div class="tp-container tp-header__menu">
+    <img
+      class="tp-header__line"
+      {...themed(headerLine)}
+      width={headerLine.width}
+      height={headerLine.height}
+      alt=""
+    />
+    <a class="tp-header__logo" href={MEE_ORIGIN} aria-label="The Mee Foundation">
+      <img src={meeLogo.src} width={meeLogo.width} height={meeLogo.height} alt="Mee" />
+    </a>
+    <nav class="tp-header__nav" aria-label="Main">
+      <a href={`${MEE_ORIGIN}/projects`}>Projects</a>
+      <a href={`${MEE_ORIGIN}/about`}>About us</a>
+    </nav>
+    <div class="tp-header__buttons">
+      <button class="tp-theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark theme">
+        <Icon class="tp-theme-toggle__moon" name="moon-fill" size={20} />
+        <Icon class="tp-theme-toggle__sun" name="sun-fill" size={20} />
+      </button>
+      <a class="tp-btn" href={githubLink} target="_blank" rel="noopener">
+        <Icon name="github" />
+        <span class="tp-btn__label">Star us</span>
+      </a>
+      <a class="tp-btn" href={discord} target="_blank" rel="noopener">
+        <Icon name="discord" />
+        <span class="tp-btn__label">Join us</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .tp-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--tp-header-edge);
+    background: linear-gradient(
+      to bottom,
+      var(--tp-header-from),
+      var(--tp-header-to)
+    );
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+  .tp-header__menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding-block: 32px;
+  }
+  .tp-header__line {
+    position: absolute;
+    top: 0;
+    left: calc(var(--tp-gutter) + 20px);
+    width: 100px;
+    height: 1px;
+  }
+  .tp-header__logo {
+    flex: 1 1 0;
+    display: flex;
+    min-width: 0;
+  }
+  .tp-header__logo img {
+    width: 81.6px;
+    height: 24px;
+  }
+  .tp-header__nav {
+    display: flex;
+    gap: 8px;
+  }
+  .tp-header__nav a {
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    color: var(--tp-title);
+    transition: background-color 0.15s;
+  }
+  .tp-header__nav a:hover {
+    background: var(--tp-surface-soft);
+  }
+  .tp-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--tp-gray-solid);
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+  .tp-theme-toggle:hover {
+    background: var(--tp-surface-soft);
+  }
+  /* Moon in light, sun in dark (the icon you'd switch to). The icons render inside <Icon>,
+     whose own display rule would win over a plain class here, so the selectors are more specific. */
+  :global(button.tp-theme-toggle .tp-icon.tp-theme-toggle__sun),
+  :global(html[data-theme='dark'] button.tp-theme-toggle .tp-icon.tp-theme-toggle__moon) {
+    display: none;
+  }
+  :global(html[data-theme='dark'] button.tp-theme-toggle .tp-icon.tp-theme-toggle__sun) {
+    display: inline-block;
+    color: #f4b62b;
+  }
+  .tp-header__buttons {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .tp-header__menu {
+      gap: 16px;
+      padding-block: 16px;
+    }
+    .tp-header__nav {
+      display: none;
+    }
+    .tp-header__buttons .tp-btn__label {
+      display: none;
+    }
+    .tp-header__buttons .tp-btn {
+      padding-inline: 10px;
+    }
+  }
+</style>

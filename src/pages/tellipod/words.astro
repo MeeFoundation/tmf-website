@@ -1,0 +1,164 @@
+---
+import TellipodLayout from '@layouts/TellipodLayout.astro';
+import PageNav from '@components/tellipod/PageNav.astro';
+import CtaCard from '@components/tellipod/CtaCard.astro';
+import {discord} from '../../tellipod';
+import wash from '@assets/tellipod/words-glow-wash.svg';
+import warm from '@assets/tellipod/words-glow-warm.svg';
+import divider from '@assets/tellipod/words-divider.svg';
+import Icon from '@components/tellipod/Icon.astro';
+
+const terms = [
+  {
+    term: 'Pod',
+    meaning:
+      'A private shared space for one part of your life: a kid, a trip, a project. It holds notes, files, forms and a chat, and only its members can open it.',
+    example: "For example: Ginger's Care, Mom's Apartment, or Family Passports & Travel Docs.",
+  },
+  {
+    term: 'Member',
+    meaning:
+      'Someone you invited to a pod. Every member keeps a full, encrypted copy of the pod on their own device.',
+    example: "For example: you, your sister and the dog sitter in Ginger's Care.",
+  },
+  {
+    term: 'Tool',
+    meaning:
+      'Something you add to a pod to work with its info, like a form, a checklist, a calendar or a medication tracker.',
+    example: 'For example: the medication tracker that shows when Ginger had her last dose.',
+  },
+  {
+    term: 'Service',
+    meaning:
+      'An optional helper that runs outside your devices, like backups or an always-on sync node. You choose who runs it, or run it yourself.',
+    example: "For example: an always-on backup, so a lost phone doesn't mean lost pods.",
+  },
+  {
+    term: 'Node',
+    meaning:
+      'Any device or server that holds a copy of a pod and helps it sync. Your phone is a node; so is a home server you run.',
+    example: "For example: your phone, your partner's tablet, or a small server at home.",
+  },
+  {
+    term: 'Identity',
+    meaning:
+      "The keys that prove you're you, created on your device and held by you. Nobody issues them, so nobody can take them away.",
+    example: "For example: the key on your phone that lets you join Mom's Apartment.",
+  },
+  {
+    term: 'Telli',
+    meaning:
+      "The pod's assistant. It answers questions about what's in the pod and suggests info to add, on your device or on your own server.",
+    example: 'For example: ask "When was Ginger\'s last dose?" and Telli finds it in the pod.',
+  },
+];
+import {themed} from '../../tellipod-theme';
+---
+
+<TellipodLayout title="Words we use · Tellipod">
+  <PageNav current="words" />
+
+  <section class="tp-container tp-intro">
+    <h1 class="tp-intro__title tp-rise" style="--tp-delay: 0.05s">Words we use</h1>
+    <p class="tp-intro__lead tp-rise" style="--tp-delay: 0.1s">
+      Tellipod has a few words of its own. Here's what each one means, in plain language.
+    </p>
+  </section>
+
+  <section class="tp-container terms">
+    <ul class="terms__list">
+      {
+        terms.map((t, i) => (
+          <li class="term">
+            {i > 0 && (
+              <img
+                class="term__rule"
+                {...themed(divider)}
+                width={divider.width}
+                height={divider.height}
+                alt=""
+              />
+            )}
+            <h2 class="term__name">{t.term}</h2>
+            <div class="term__meaning">
+              <p class="term__text">{t.meaning}</p>
+              <p class="term__example">{t.example}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <CtaCard wash={wash} warm={warm}>
+      <div class="tp-cta__text">
+        <p class="tp-hand tp-cta__ps">p.s.</p>
+        <h2 class="tp-cta__title">Missing a word?</h2>
+        <p class="tp-cta__lead">Ask us on Discord, and we'll explain it and add it here.</p>
+      </div>
+      <div class="tp-cta__buttons">
+        <a class="tp-btn tp-btn--brand" href={discord} target="_blank" rel="noopener">
+          <Icon name="discord" />
+          <span class="tp-btn__label">Ask on Discord</span>
+        </a>
+      </div>
+    </CtaCard>
+  </section>
+</TellipodLayout>
+
+<style>
+  .terms {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-bottom: 128px;
+  }
+  .term {
+    position: relative;
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 64px;
+    padding-block: 32px;
+  }
+  .term__rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .term__name {
+    font-size: 30px;
+    line-height: 40px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    color: var(--tp-title);
+  }
+  .term__meaning {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .term__text {
+    font-size: 20px;
+    line-height: 30px;
+    color: var(--tp-body);
+  }
+  .term__example {
+    font-size: 18px;
+    line-height: 28px;
+    color: var(--tp-subtle);
+  }
+
+  @media (max-width: 900px) {
+    .term {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+  @media (max-width: 760px) {
+    .terms {
+      gap: 40px;
+      padding-bottom: 80px;
+    }
+  }
+</style>

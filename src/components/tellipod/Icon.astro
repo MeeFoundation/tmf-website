@@ -1,0 +1,26 @@
+---
+// Bootstrap Icons (the same library the rest of the site uses). Takes its colour from
+// the surrounding text, so it needs no separate dark-mode artwork.
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+}
+
+const {name, size = 24, class: className} = Astro.props;
+---
+
+<i class:list={['bi', `bi-${name}`, 'tp-icon', className]} style={`--size: ${size}px`} aria-hidden="true"
+></i>
+
+<style>
+  .tp-icon {
+    display: inline-block;
+    flex: none;
+    width: var(--size);
+    height: var(--size);
+    font-size: var(--size);
+    line-height: 1;
+    vertical-align: top;
+  }
+</style>

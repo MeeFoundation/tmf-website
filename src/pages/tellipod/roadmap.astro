@@ -1,0 +1,393 @@
+---
+import TellipodLayout from '@layouts/TellipodLayout.astro';
+import PageNav from '@components/tellipod/PageNav.astro';
+import CtaCard from '@components/tellipod/CtaCard.astro';
+import {discord, githubLink} from '../../tellipod';
+import wash from '@assets/tellipod/roadmap-glow-wash.svg';
+import warm from '@assets/tellipod/roadmap-glow-warm.svg';
+import progress from '@assets/tellipod/timeline-progress.svg';
+import planned from '@assets/tellipod/timeline-planned.svg';
+import milestoneCheck from '@assets/tellipod/milestone-check.svg';
+import milestoneCurrent from '@assets/tellipod/milestone-current.svg';
+import dotSuccess from '@assets/tellipod/dot-success.svg';
+import dotBrand from '@assets/tellipod/dot-brand.svg';
+import Icon from '@components/tellipod/Icon.astro';
+
+type Status = 'done' | 'current' | 'next' | 'later';
+
+const phases: {
+  status: Status;
+  pill: string;
+  phase: string;
+  title: string;
+  items: string[];
+}[] = [
+  {
+    status: 'done',
+    pill: 'Done',
+    phase: 'Phase 1',
+    title: 'Foundations',
+    items: ['Notes, files and chat', 'Invites with one-time links', 'Device-to-device sync'],
+  },
+  {
+    status: 'current',
+    pill: 'In progress',
+    phase: 'Phase 2',
+    title: 'Private alpha',
+    items: ['iOS app for early testers', 'End-to-end encryption', 'Telli, the pod assistant'],
+  },
+  {
+    status: 'next',
+    pill: 'Next',
+    phase: 'Phase 3',
+    title: 'Public beta',
+    items: ['Android and desktop apps', 'Self-hosted sync nodes', 'Encrypted backups'],
+  },
+  {
+    status: 'later',
+    pill: 'Later',
+    phase: 'Phase 4',
+    title: 'Open ecosystem',
+    items: ['Telli on your own server', 'Open protocol and docs', 'Independent security audit'],
+  },
+];
+
+const itemIcon = {done: 'check2-circle', current: 'circle', next: 'circle', later: 'circle'};
+import {themed} from '../../tellipod-theme';
+---
+
+<TellipodLayout title="Roadmap · Tellipod">
+  <PageNav current="roadmap" />
+
+  <section class="tp-container tp-intro">
+    <h1 class="tp-intro__title tp-rise" style="--tp-delay: 0.05s">
+      Where we are, and what's next
+    </h1>
+    <p class="tp-intro__lead tp-rise" style="--tp-delay: 0.1s">
+      We build in the open and ship in small steps. Dates will move; the direction
+      won't. Here's the plan as it stands today.
+    </p>
+  </section>
+
+  <section class="tp-container phases-section">
+    <ol class="phases">
+      <li class="track" aria-hidden="true">
+        <img class="track__progress" src={progress.src} alt="" />
+        <img class="track__planned" {...themed(planned)} alt="" />
+      </li>
+      {
+        phases.map((p, i) => (
+          <li class={`phase phase--${p.status} tp-rise`} style={`--tp-delay: ${0.15 + i * 0.08}s`}>
+            <div class="marker" aria-hidden="true">
+              {p.status === 'done' && (
+                <span class="marker__done">
+                  <img {...themed(milestoneCheck)} width="16" height="16" alt="" />
+                </span>
+              )}
+              {p.status === 'current' && (
+                <img {...themed(milestoneCurrent)} width="24" height="24" alt="" />
+              )}
+              {(p.status === 'next' || p.status === 'later') && <span class="marker__todo" />}
+            </div>
+            {p.status === 'current' && <span class="phase__ring" aria-hidden="true" />}
+            <article class="phase__card" aria-current={p.status === 'current' ? 'step' : undefined}>
+              <span class={`pill pill--${p.status}`}>
+                {p.status === 'done' && <img {...themed(dotSuccess)} width="14" height="14" alt="" />}
+                {p.status === 'current' && <img {...themed(dotBrand)} width="14" height="14" alt="" />}
+                <span>{p.pill}</span>
+              </span>
+              <div>
+                <p class="tp-eyebrow phase__label">{p.phase}</p>
+                <h2 class="phase__title">{p.title}</h2>
+              </div>
+              <ul class="items">
+                {p.items.map((item) => (
+                  <li>
+                    <Icon name={itemIcon[p.status]} size={20} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+
+    <CtaCard wash={wash} warm={warm}>
+      <div class="tp-cta__text">
+        <p class="tp-hand tp-cta__ps">p.s.</p>
+        <h2 class="tp-cta__title">Want to help us get there?</h2>
+        <p class="tp-cta__lead">We build in the open. Read the code, report a bug, or come say hi.</p>
+      </div>
+      <div class="tp-cta__buttons">
+        <a class="tp-btn tp-btn--brand" href={githubLink} target="_blank" rel="noopener">
+          <Icon name="github" />
+          <span class="tp-btn__label">Read the code on GitHub</span>
+        </a>
+        <a class="tp-btn tp-btn--brand" href={discord} target="_blank" rel="noopener">
+          <Icon name="discord" />
+          <span class="tp-btn__label">Join us on Discord</span>
+        </a>
+      </div>
+    </CtaCard>
+  </section>
+</TellipodLayout>
+
+<style>
+  .phases-section {
+    display: flex;
+    flex-direction: column;
+    gap: 96px;
+    padding-bottom: 128px;
+  }
+
+  .phases {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .track {
+    position: absolute;
+    top: 19px;
+    left: 44px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    height: 2px;
+  }
+  .track img {
+    display: block;
+    max-width: none;
+    height: 2px;
+  }
+  /* From the first milestone to the second: one column plus one gap. */
+  .track__progress {
+    flex: none;
+    width: calc((100% - 72px) / 4 + 24px);
+  }
+  .track__planned {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .phase {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 24px;
+    border-radius: 9999px;
+  }
+  .phase--current .marker {
+    background: var(--tp-brand-light);
+  }
+  .marker__done {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    background: var(--tp-brand-main);
+  }
+  .marker__todo {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--tp-stroke-accent);
+    border-radius: 9999px;
+    background: var(--tp-surface);
+  }
+
+  .phase__card {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px;
+    border: 1px solid var(--tp-phase-card-stroke);
+    border-radius: 28px;
+    background: var(--tp-phase-card-bg);
+    filter: drop-shadow(0 0 1px rgba(2, 6, 23, 0.07))
+      drop-shadow(0 1px 0.5px rgba(2, 6, 23, 0.05));
+  }
+  .phase--current .phase__card {
+    border-color: var(--tp-current-stroke);
+    filter: drop-shadow(0 2px 3px rgba(2, 6, 23, 0.07))
+      drop-shadow(0 6px 9px rgba(2, 6, 23, 0.05));
+  }
+  /* A soft ring that draws the eye to where we are right now. */
+  .phase__ring {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 64px;
+    border: 2px solid var(--tp-brand-main);
+    border-radius: 28px;
+    pointer-events: none;
+    opacity: 0;
+    animation: ring 3.6s ease-out 1.2s infinite;
+  }
+  @keyframes ring {
+    0% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.04);
+    }
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 2px 6px;
+    border: 1px solid var(--tp-stroke-light);
+    border-radius: 9999px;
+    background: var(--tp-surface-soft);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    color: var(--tp-gray-solid);
+    white-space: nowrap;
+  }
+  .pill span {
+    padding-inline: 6px;
+  }
+  .pill--done {
+    border-color: var(--tp-success-stroke);
+    background: var(--tp-success-bg);
+    color: var(--tp-success-text);
+  }
+  .pill--current {
+    border-color: var(--tp-brand-stroke);
+    background: var(--tp-brand-soft);
+    color: var(--tp-brand-solid);
+  }
+  .pill--next span,
+  .pill--later span {
+    padding-inline: 6px;
+  }
+
+  .phase__label {
+    margin-bottom: 4px;
+    color: var(--tp-subtle);
+  }
+  .phase__title {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    color: var(--tp-title);
+  }
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--tp-body);
+  }
+  .items li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .items :global(.tp-icon) {
+    margin-block: 2px;
+  }
+  .phase--done .items :global(.tp-icon) {
+    color: var(--tp-success-text);
+  }
+  .phase--current .items :global(.tp-icon) {
+    color: var(--tp-brand-main);
+  }
+  .phase--next .items .tp-icon,
+  .phase--later .items :global(.tp-icon) {
+    color: var(--tp-subtle);
+  }
+  .phase--next .items,
+  .phase--later .items {
+    color: var(--tp-subtle);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .phase__ring {
+      animation: none;
+    }
+  }
+
+  /* Doesn't fit in one row: stack the phases vertically along a rail. */
+  @media (max-width: 1100px) {
+    .phases {
+      grid-template-columns: 1fr;
+      row-gap: 32px;
+    }
+    .track {
+      display: none;
+    }
+    .phase {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      column-gap: 24px;
+      align-items: start;
+    }
+    .marker {
+      position: relative;
+      z-index: 1;
+      margin-left: 0;
+    }
+    /* Rail segment from this marker's centre to the next one's. */
+    .phase:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 20px;
+      height: calc(100% + 32px);
+      border-left: 2px dashed var(--tp-stroke-accent);
+    }
+    .phase--done:not(:last-child)::before {
+      border-left: 2px solid var(--tp-brand-main);
+    }
+    .phase__ring {
+      top: 0;
+      left: 64px;
+    }
+  }
+  @media (max-width: 640px) {
+    .phases-section {
+      gap: 64px;
+      padding-bottom: 80px;
+    }
+    .phases {
+      row-gap: 24px;
+    }
+    .phase {
+      column-gap: 16px;
+    }
+    .phase:not(:last-child)::before {
+      height: calc(100% + 24px);
+    }
+    .phase__ring {
+      left: 56px;
+    }
+    .phase__card {
+      padding: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+import {themed} from '../../tellipod-theme';
+
+export interface Props {
+  wash: ImageMetadata;
+  warm: ImageMetadata;
+}
+
+const {wash, warm} = Astro.props;
+---
+
+<div class="tp-cta">
+  <img class="tp-cta__glow" {...themed(wash)} width={wash.width} height={wash.height} alt="" />
+  <img class="tp-cta__glow" {...themed(warm)} width={warm.width} height={warm.height} alt="" />
+  <div class="tp-stack tp-cta__stack">
+    <div class="tp-stack__card tp-cta__card">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .tp-cta {
+    position: relative;
+  }
+  .tp-cta__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .tp-cta__stack {
+    position: relative;
+  }
+  .tp-cta__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 72px 80px;
+    text-align: center;
+  }
+
+  @media (max-width: 760px) {
+    .tp-cta__card {
+      padding: 48px 24px;
+    }
+  }
+</style>
+
+<style is:global>
+  .tp-cta__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 720px;
+  }
+  .tp-cta__ps {
+    font-size: 32px;
+    line-height: 51px;
+  }
+  .tp-cta__title {
+    font-size: clamp(30px, 4vw, 36px);
+    line-height: 1.22;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    color: var(--tp-title);
+  }
+  .tp-cta__title--lg {
+    font-size: clamp(34px, 4vw, 48px);
+    line-height: 1.25;
+  }
+  .tp-cta__lead {
+    font-size: 20px;
+    line-height: 30px;
+    color: var(--tp-subtle);
+  }
+  .tp-cta__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+</style>

@@ -1,0 +1,505 @@
+---
+import '@styles/base.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import Header from '@components/tellipod/Header.astro';
+import Footer from '@components/tellipod/Footer.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  background?: 'white' | 'cream';
+}
+
+const {
+  title,
+  description = 'Tellipod is a private shared space for one part of your life. Notes, files and chat, encrypted end to end. Free and open source, from The Mee Foundation.',
+  background = 'white',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <script is:inline>
+      // Set the theme before first paint: saved choice, else the OS setting. Uses the same
+      // storage key and html attributes as the main site's theme selector (mee-components).
+      (function () {
+        var theme;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch (e) {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        if (theme === 'dark') {
+          // Use the dark artwork as the images are parsed, so light ones never paint first.
+          var swapDark = function (img) {
+            img.setAttribute('src', img.dataset.darkSrc);
+          };
+          var observer = new MutationObserver(function (records) {
+            records.forEach(function (record) {
+              record.addedNodes.forEach(function (node) {
+                if (node.nodeType !== 1) return;
+                if (node.matches('img[data-dark-src]')) swapDark(node);
+                node.querySelectorAll('img[data-dark-src]').forEach(swapDark);
+              });
+            });
+          });
+          observer.observe(document.documentElement, {childList: true, subtree: true});
+          document.addEventListener('DOMContentLoaded', function () {
+            observer.disconnect();
+          });
+        }
+      })();
+    </script>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://mee.foundation/mee_fav_icon.png" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta
+      property="twitter:image"
+      content="https://mee.foundation/mee_fav_icon.png"
+    />
+
+    <title>{title}</title>
+  </head>
+  <body class:list={['tp-page', `tp-page--${background}`]}>
+    <Header />
+    <main class="tp-main">
+      <slot />
+    </main>
+    <Footer />
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        var toggles = document.querySelectorAll('[data-theme-toggle]');
+        var swap = function (dark) {
+          document.querySelectorAll('img[data-dark-src]').forEach(function (img) {
+            var next = dark ? img.dataset.darkSrc : img.dataset.lightSrc;
+            if (img.getAttribute('src') !== next) img.setAttribute('src', next);
+          });
+        };
+        var apply = function (theme) {
+          var dark = theme === 'dark';
+          root.dataset.theme = theme;
+          root.classList.toggle('dark', dark);
+          if (meta) meta.setAttribute('content', dark ? '#020617' : '#ffffff');
+          toggles.forEach(function (btn) {
+            btn.setAttribute('aria-pressed', String(dark));
+            btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+          });
+          swap(dark);
+        };
+        apply(root.dataset.theme);
+
+        // The main site keeps the shared choice in a hidden mee.foundation iframe (see
+        // mee-components ThemeSelect and /storage), so read and write it the same way.
+        var storageOrigin = 'https://mee.foundation';
+        var frame = document.createElement('iframe');
+        var frameReady = false;
+        var chosen = null; // set once the visitor clicks, so a late reply can't undo it
+        var save = function (theme) {
+          try {
+            localStorage.setItem('theme', theme);
+          } catch (e) {}
+        };
+        var send = function (message) {
+          frame.contentWindow.postMessage(message, storageOrigin);
+        };
+        frame.src = storageOrigin + '/storage/index.html';
+        frame.title = 'Color Theme';
+        frame.style.cssText = 'position:absolute;width:0;height:0;border:0';
+        frame.onload = function () {
+          frameReady = true;
+          if (chosen) send({method: 'setTheme', theme: chosen});
+          else send({method: 'getTheme'});
+        };
+        window.addEventListener('message', function (e) {
+          var msg = e.data;
+          if (e.origin !== storageOrigin || !msg || msg.method !== 'getTheme' || chosen) return;
+          if (msg.theme !== 'light' && msg.theme !== 'dark') return;
+          save(msg.theme);
+          apply(msg.theme);
+        });
+        document.body.appendChild(frame);
+
+        toggles.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            chosen = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            save(chosen);
+            if (frameReady) send({method: 'setTheme', theme: chosen});
+            apply(chosen);
+          });
+        });
+        // Follow the OS while the visitor hasn't picked a theme themselves.
+        matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+          var saved = null;
+          try {
+            saved = localStorage.getItem('theme');
+          } catch (err) {}
+          if (!saved) apply(e.matches ? 'dark' : 'light');
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Caveat';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../assets/fonts/Caveat-Bold.woff2') format('woff2');
+  }
+
+  /* The shared base styles paint <html> white and size <body> to the viewport. */
+  html[data-theme='dark'] {
+    background: #020617;
+  }
+
+  .tp-page {
+    --tp-brand-main: #4f868e;
+    --tp-brand-solid: #3b5b63;
+    --tp-brand-solid-hover: #374e53;
+    --tp-brand-light: #dfecee;
+    --tp-brand-soft: #f3f8f8;
+    --tp-brand-stroke: #c3dcde;
+    --tp-title: #0f172a;
+    --tp-body: #1e293b;
+    --tp-subtle: #475569;
+    --tp-gray-solid: #334155;
+    --tp-stroke-light: #e2e8f0;
+    --tp-stroke-soft: #f1f5f9;
+    --tp-stroke-accent: #cbd5e1;
+    --tp-surface-soft: #f8fafc;
+    --tp-surface-light: #f1f5f9;
+    --tp-cream: #fefaec;
+    --tp-bg: #fff;
+    --tp-surface: #fff;
+    --tp-hairline: rgba(2, 6, 23, 0.07);
+    --tp-ring: rgba(2, 6, 23, 0.05);
+    --tp-muted: rgba(2, 6, 23, 0.6);
+    --tp-surface-raised: #fff;
+    --tp-avatar-bg: var(--tp-brand-light);
+    --tp-phase-card-bg: #fff;
+    --tp-phase-card-stroke: var(--tp-stroke-light);
+    --tp-btn-brand-bg: var(--tp-surface-raised);
+    --tp-btn-brand-hover-bg: var(--tp-brand-soft);
+    --tp-sheet: #fff;
+    --tp-primary-from: #3b5b63;
+    --tp-primary-to: #4f868e;
+    --tp-primary-hover-from: #374e53;
+    --tp-primary-hover-to: #436e77;
+    --tp-primary-border: #374e53;
+    --tp-primary-text: #fff;
+    --tp-primary-sheen: rgba(255, 255, 255, 0.15);
+    --tp-success-bg: #f2f7ee;
+    --tp-success-stroke: #c8dbbb;
+    --tp-success-text: #3f5932;
+    --tp-current-stroke: #9ac2c6;
+    --tp-header-from: rgba(255, 255, 255, 0.8);
+    --tp-header-to: rgba(255, 255, 255, 0.6);
+    --tp-header-edge: rgba(255, 255, 255, 0.9);
+    --tp-max: 1280px;
+    --tp-gutter: 24px;
+
+    color-scheme: light;
+    height: auto;
+    min-height: 100vh;
+    margin: 0;
+    background: var(--tp-bg);
+    color: var(--tp-body);
+    font-family: 'Public Sans', system-ui, sans-serif;
+    letter-spacing: 0.005em;
+    -webkit-font-smoothing: antialiased;
+  }
+  html[data-theme='dark'] .tp-page {
+    --tp-brand-main: #4f868e;
+    --tp-brand-solid: #9ac2c6;
+    --tp-brand-solid-hover: #c3dcde;
+    --tp-brand-light: #314248;
+    --tp-brand-soft: #1d2a2f;
+    --tp-brand-stroke: #374e53;
+    --tp-title: #f8fafc;
+    --tp-body: #e2e8f0;
+    --tp-subtle: #94a3b8;
+    --tp-gray-solid: #cbd5e1;
+    --tp-stroke-light: #1e293b;
+    --tp-stroke-soft: #1e293b;
+    --tp-stroke-accent: #475569;
+    --tp-surface-soft: #0f172a;
+    --tp-surface-light: #1e293b;
+    --tp-cream: #020617;
+    --tp-bg: #020617;
+    --tp-surface: #020617;
+    --tp-surface-raised: #0f172a;
+    --tp-sheet: #1e293b;
+    --tp-hairline: rgba(255, 255, 255, 0.07);
+    --tp-ring: rgba(255, 255, 255, 0.05);
+    --tp-muted: rgba(255, 255, 255, 0.6);
+    --tp-avatar-bg: #1e293b;
+    --tp-phase-card-bg: transparent;
+    --tp-phase-card-stroke: transparent;
+    --tp-btn-brand-bg: #314248;
+    --tp-btn-brand-hover-bg: #3b525a;
+    --tp-success-bg: #162112;
+    --tp-success-stroke: #35482c;
+    --tp-success-text: #a6c492;
+    --tp-primary-from: #9ac2c6;
+    --tp-primary-to: #4f868e;
+    --tp-primary-hover-from: #b4d3d6;
+    --tp-primary-hover-to: #5f9aa2;
+    --tp-primary-border: #9ac2c6;
+    --tp-primary-text: #1d2a2f;
+    --tp-primary-sheen: rgba(2, 6, 23, 0.15);
+    --tp-current-stroke: transparent;
+    --tp-header-from: rgba(2, 6, 23, 0.8);
+    --tp-header-to: rgba(2, 6, 23, 0.6);
+    --tp-header-edge: rgba(2, 6, 23, 0.9);
+    color-scheme: dark;
+  }
+  .tp-page--cream {
+    background: var(--tp-cream);
+  }
+  .tp-main {
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+  }
+
+  .tp-container {
+    width: 100%;
+    max-width: calc(var(--tp-max) + 2 * var(--tp-gutter));
+    margin-inline: auto;
+    padding-inline: var(--tp-gutter);
+  }
+
+  .tp-hand {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--tp-brand-main);
+  }
+
+  /* Buttons */
+  .tp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 10px 16px;
+    border: 1px solid var(--tp-stroke-accent);
+    border-radius: 12px;
+    background: var(--tp-surface-raised);
+    color: var(--tp-gray-solid);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .tp-btn:hover {
+    background: var(--tp-surface-soft);
+  }
+  .tp-btn__label {
+    padding-inline: 10px;
+  }
+  .tp-btn img,
+  .tp-btn .tp-icon {
+    flex: none;
+  }
+  .tp-btn--brand {
+    border-color: var(--tp-brand-light);
+    background: var(--tp-btn-brand-bg);
+    color: var(--tp-brand-solid);
+  }
+  .tp-btn--brand:hover {
+    background: var(--tp-btn-brand-hover-bg);
+  }
+  .tp-btn--primary {
+    position: relative;
+    border-color: var(--tp-primary-border);
+    color: var(--tp-primary-text);
+    background:
+      linear-gradient(180deg, var(--tp-primary-sheen) 0%, transparent 100%),
+      linear-gradient(99deg, var(--tp-primary-from) 0%, var(--tp-primary-to) 100%);
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.25);
+  }
+  .tp-btn--primary:hover {
+    background:
+      linear-gradient(180deg, var(--tp-primary-sheen) 0%, transparent 100%),
+      linear-gradient(99deg, var(--tp-primary-hover-from) 0%, var(--tp-primary-hover-to) 100%);
+  }
+  .tp-btn--lg {
+    height: 56px;
+    padding: 12px 24px;
+    border-radius: 16px;
+    font-size: 20px;
+    line-height: 30px;
+    letter-spacing: 0.005em;
+  }
+
+  /* Underlined text link */
+  .tp-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    color: var(--tp-brand-solid);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .tp-link:hover {
+    color: var(--tp-brand-solid-hover);
+  }
+
+  /* A stack of paper sheets behind a card */
+  .tp-stack {
+    position: relative;
+    isolation: isolate;
+  }
+  .tp-stack::before,
+  .tp-stack::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    background: var(--tp-surface);
+    box-shadow:
+      0 12px 28px rgba(15, 23, 42, 0.07),
+      0 2px 6px rgba(15, 23, 42, 0.05);
+    animation: tp-settle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+  .tp-stack::before {
+    inset: -10px -4px -12px;
+    opacity: 0.7;
+    transform: rotate(-1.14deg);
+  }
+  .tp-stack::after {
+    background: var(--tp-sheet);
+    inset: -15px -5px -17px;
+    opacity: 0.9;
+    transform: rotate(1.57deg);
+    animation-delay: 0.08s;
+  }
+  .tp-stack__card {
+    background: var(--tp-surface);
+    filter: drop-shadow(0 20px 20px rgba(15, 23, 42, 0.1))
+      drop-shadow(0 6px 7px rgba(15, 23, 42, 0.06))
+      drop-shadow(0 1px 1px rgba(15, 23, 42, 0.06));
+  }
+
+  /* Page intro: handwritten eyebrow, big title, lead */
+  .tp-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 56px;
+    padding-bottom: 24px;
+  }
+  .tp-intro__eyebrow {
+    font-size: 30px;
+    line-height: 51px;
+  }
+  .tp-intro__title {
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.11;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    color: var(--tp-title);
+  }
+  .tp-intro__lead {
+    font-size: 20px;
+    line-height: 30px;
+    color: var(--tp-subtle);
+  }
+
+  .tp-eyebrow {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .tp-rise {
+    animation: tp-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    animation-delay: var(--tp-delay, 0s);
+  }
+
+  /*
+   * Timeline from the Figma prototype. Each element sets its own start (--at),
+   * fade and move durations, and what it moves from (--y, --rot, --sx, --sy).
+   */
+  .tp-seq {
+    --y: 0px;
+    --rot: 0deg;
+    --sx: 1;
+    --sy: 1;
+    animation:
+      tp-fade var(--fade, 0.5s) ease-out var(--at, 0s) backwards,
+      tp-move var(--move, var(--fade, 0.5s)) ease-out var(--at, 0s) backwards;
+  }
+  @keyframes tp-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes tp-move {
+    from {
+      translate: 0 var(--y);
+      rotate: var(--rot);
+      scale: var(--sx) var(--sy);
+    }
+  }
+
+  @keyframes tp-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  @keyframes tp-settle {
+    from {
+      opacity: 0;
+      transform: rotate(0deg) translateY(14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp-rise,
+    .tp-seq,
+    .tp-seq::before,
+    .tp-seq::after,
+    .tp-stack::before,
+    .tp-stack::after {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .tp-intro__eyebrow {
+      font-size: 24px;
+      line-height: 40px;
+    }
+    .tp-intro__lead {
+      font-size: 18px;
+      line-height: 28px;
+    }
+  }
+</style>
