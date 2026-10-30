@@ -1,0 +1,293 @@
+---
+import TellipodLayout from '@layouts/TellipodLayout.astro';
+import {BETA_URL, tellipodPages} from '../../tellipod';
+import logo from '@assets/tellipod/tellipod-logo.svg';
+import glow from '@assets/tellipod/landing-glow.svg';
+import dot from '@assets/tellipod/dot-gray.svg';
+import divider from '@assets/tellipod/landing-divider.svg';
+import Icon from '@components/tellipod/Icon.astro';
+import SplitText from '@components/tellipod/SplitText.astro';
+import {themed} from '../../tellipod-theme';
+---
+
+<TellipodLayout title="Tellipod: a letter from the people building it" background="cream">
+  <section class="letter">
+    <img
+      class="letter__glow tp-seq"
+      style="--fade: 1.4s"
+      {...themed(glow)}
+      width={glow.width}
+      height={glow.height}
+      alt=""
+    />
+    <h1 class="letter__title">A letter from the people building Tellipod</h1>
+
+    <div class="tp-stack tp-stack--letter letter__stack">
+      <article
+        class="tp-stack__card letter__card tp-seq"
+        style="--at: 0.1s; --fade: 0.6s; --move: 0.9s; --y: 56px; --rot: 0.026rad; --sx: 0.97; --sy: 0.97"
+      >
+        <header class="letter__head tp-seq" style="--at: 0.8s; --fade: 0.5s; --y: 12px">
+          <img {...themed(logo)} width={logo.width} height={logo.height} alt="Tellipod" />
+          <div class="letter__meta tp-seq" style="--at: 1s; --fade: 0.4s">
+            <time class="tp-seq" datetime="2026-10" style="--at: 1s; --fade: 0.4s; --y: 6px">October 2026</time>
+            <span class="letter__badge">
+              <img {...themed(dot)} width="14" height="14" alt="" />
+              <span>Private beta</span>
+            </span>
+          </div>
+        </header>
+
+        <p class="tp-hand letter__hi">
+          <SplitText text="Hi there," start={1100} step={105.4} dur={162} />
+        </p>
+
+        <div class="letter__body">
+          <p class="tp-seq" style="--at: 1.7s; --fade: 0.5s; --y: 20px">
+            We are building Tellipod because we were tired of keeping our sensitive
+            personal information in unencrypted group chats and corporate cloud
+            drives.
+          </p>
+          <p class="tp-seq" style="--at: 2.05s; --fade: 0.5s; --y: 20px">
+            We aren't backed by venture capital, and we don't sell your data. We're a
+            small independent team building the software we want our own families and
+            friends to use.
+          </p>
+          <p class="letter__ps tp-seq" style="--at: 2.4s; --fade: 0.5s; --y: 20px">
+            P.S. Tellipod is free and open source, so anyone can check that it works
+            the way we say it does.
+          </p>
+        </div>
+
+        <p class="letter__sign">
+          <SplitText text="— The Tellipod team" start={3050} step={60.5} dur={93} />
+        </p>
+
+        <footer class="letter__links">
+          <img
+            class="letter__divider tp-seq"
+            style="--at: 3.9s; --fade: 0.3s; --move: 0.6s; --sx: 0.2"
+            {...themed(divider)}
+            width={divider.width}
+            height={divider.height}
+            alt=""
+          />
+          <div class="letter__next">
+            <nav class="letter__pages" aria-label="Tellipod">
+              {
+                tellipodPages.map((page, i) => (
+                  <>
+                    {i > 0 && (
+                      <span class="letter__sep" aria-hidden="true">
+                        ·
+                      </span>
+                    )}
+                    <a
+                      class="tp-link tp-seq"
+                      href={page.href}
+                      style={`--at: ${4.2 + i * 0.12}s; --fade: 0.4s; --y: 12px`}
+                    >
+                      {page.name}
+                    </a>
+                  </>
+                ))
+              }
+            </nav>
+            {
+              BETA_URL && (
+                <a
+                  class="tp-btn tp-btn--primary tp-seq"
+                  href={BETA_URL}
+                  style="--at: 4.66s; --fade: 0.45s; --y: 14px"
+                >
+                  <span class="tp-btn__label">Join the beta</span>
+                  <Icon name="arrow-right" />
+                </a>
+              )
+            }
+          </div>
+        </footer>
+      </article>
+    </div>
+  </section>
+</TellipodLayout>
+
+<style>
+  .letter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    min-height: 1300px;
+    justify-content: center;
+    padding: 208px 24px 160px;
+  }
+  .letter__glow {
+    position: absolute;
+    top: calc(50% + 50px);
+    left: 50%;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  /* The page's heading, kept for screen readers and search. */
+  .letter__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .letter__stack {
+    position: relative;
+    width: 100%;
+    max-width: 920px;
+  }
+  /* The sheets under the letter are the same size as the letter, just turned. */
+  .tp-stack.letter__stack::before {
+    inset: 0;
+    transform: rotate(-1.59deg);
+    --y: 56px;
+    --rot: 0.028rad;
+    animation:
+      tp-fade 0.8s ease-out 0.1s backwards,
+      tp-move 1.2s ease-out 0.1s backwards;
+  }
+  .tp-stack.letter__stack::after {
+    inset: 0;
+    transform: rotate(2.18deg);
+    --y: 56px;
+    --rot: -0.038rad;
+    animation:
+      tp-fade 0.8s ease-out 0.1s backwards,
+      tp-move 1.1s ease-out 0.1s backwards;
+  }
+  .letter__card {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    padding: 102px clamp(24px, 11vw, 104px);
+  }
+  .letter__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .letter__head > img {
+    width: 138px;
+    height: 38px;
+  }
+  .letter__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--tp-title);
+  }
+  .letter__badge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 2px 6px;
+    border: 1px solid var(--tp-stroke-light);
+    border-radius: 9999px;
+    background: var(--tp-surface-soft);
+    font-weight: 600;
+    color: var(--tp-gray-solid);
+    white-space: nowrap;
+  }
+  .letter__badge span {
+    padding-inline: 6px;
+  }
+  .letter__hi {
+    font-size: 52px;
+    line-height: 51px;
+  }
+  .letter__body {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--tp-body);
+    letter-spacing: 0.005em;
+  }
+  .letter__ps {
+    color: var(--tp-subtle);
+  }
+  .letter__sign {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 46px;
+    letter-spacing: 0;
+    color: var(--tp-title);
+  }
+  .letter__links {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .letter__divider {
+    width: 100%;
+    height: 1px;
+  }
+  .letter__next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .letter__pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .letter__sep {
+    font-size: 12px;
+    color: var(--tp-title);
+  }
+
+  /* The header fades in first, over the first 0.6s. */
+  :global(.tp-header) {
+    animation: tp-fade 0.6s ease-out backwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.tp-header),
+    .tp-stack.letter__stack::before,
+    .tp-stack.letter__stack::after {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .letter {
+      min-height: 0;
+      padding-top: 128px;
+      gap: 32px;
+    }
+    .letter__card {
+      gap: 28px;
+      padding-block: 48px;
+    }
+    .letter__hi {
+      font-size: 44px;
+    }
+    .letter__body {
+      font-size: 20px;
+      line-height: 30px;
+    }
+    .letter__sign {
+      font-size: 34px;
+    }
+  }
+</style>

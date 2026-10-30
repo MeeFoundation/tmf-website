@@ -1,0 +1,68 @@
+---
+// Types text in character by character (fade + unblur), like the Figma text animation.
+// `start`, `step` and `dur` are in milliseconds.
+export interface Props {
+  text: string;
+  start: number;
+  step: number;
+  dur: number;
+}
+
+const {text, start, step, dur} = Astro.props;
+
+let index = 0;
+const words = text.split(/\s+/).map((word) =>
+  [...word].map((char) => ({char, i: index++})),
+);
+---
+
+<span class="tp-split" style={`--tp-start:${start}ms;--tp-step:${step}ms;--tp-dur:${dur}ms`}>
+  <span class="tp-split__text">{text}</span>
+  <span aria-hidden="true">
+    {
+      words.map((chars, w) => (
+        <>
+          {w > 0 && ' '}
+          <span class="tp-split__word">
+            {chars.map(({char, i}) => (
+              <span class="tp-split__char" style={`--i:${i}`}>
+                {char}
+              </span>
+            ))}
+          </span>
+        </>
+      ))
+    }
+  </span>
+</span>
+
+<style>
+  .tp-split__text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .tp-split__word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .tp-split__char {
+    display: inline-block;
+    animation: tp-char var(--tp-dur) cubic-bezier(0, 0, 0.58, 1)
+      calc(var(--tp-start) + var(--i) * var(--tp-step)) backwards;
+  }
+  @keyframes tp-char {
+    from {
+      opacity: 0;
+      filter: blur(6px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tp-split__char {
+      animation: none;
+    }
+  }
+</style>

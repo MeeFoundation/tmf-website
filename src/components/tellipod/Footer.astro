@@ -1,0 +1,105 @@
+---
+import {MEE_ORIGIN, discord, githubLink} from '../../tellipod';
+import curve from '@assets/tellipod/footer-curve.svg';
+import footerLogo from '@assets/tellipod/footer-logo.svg';
+import Icon from './Icon.astro';
+---
+
+<footer class="tp-footer">
+  <img
+    class="tp-footer__curve"
+    src={curve.src}
+    width={curve.width}
+    height={curve.height}
+    alt=""
+  />
+  <a class="tp-footer__logo" href={MEE_ORIGIN} aria-label="Mee">
+    <img src={footerLogo.src} width={footerLogo.width} height={footerLogo.height} alt="" />
+  </a>
+  <div class="tp-container tp-footer__row">
+    <p class="tp-footer__copy">© {new Date().getFullYear()} The Mee Foundation, Inc.</p>
+    <div class="tp-footer__social">
+      <a href={discord} target="_blank" rel="noopener" aria-label="Discord">
+        <Icon name="discord" />
+      </a>
+      <a href={githubLink} target="_blank" rel="noopener" aria-label="GitHub">
+        <Icon name="github" />
+      </a>
+    </div>
+    <nav class="tp-footer__links" aria-label="Footer">
+      <a href={`${MEE_ORIGIN}/about`}>About us</a>
+      <a href={`${MEE_ORIGIN}/privacy-policy`}>Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .tp-footer {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 64px 24px 40px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+  .tp-footer__curve {
+    position: absolute;
+    top: 0;
+    left: calc(50% - 0.17px);
+    width: 2532px;
+    max-width: none;
+    height: 380px;
+    transform: translateX(-50%);
+  }
+  .tp-footer__logo,
+  .tp-footer__row {
+    position: relative;
+  }
+  .tp-footer__logo img {
+    width: 315px;
+    height: 40px;
+  }
+  .tp-footer__row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 40px;
+  }
+  .tp-footer__social {
+    display: flex;
+    gap: 32px;
+  }
+  .tp-footer__social a {
+    display: inline-flex;
+    color: inherit;
+  }
+  .tp-footer__links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 40px;
+  }
+
+  @media (max-width: 760px) {
+    .tp-footer {
+      gap: 32px;
+    }
+    .tp-footer__logo img {
+      width: 240px;
+      height: auto;
+    }
+    .tp-footer__row {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 24px;
+      text-align: center;
+    }
+    .tp-footer__links {
+      justify-content: center;
+    }
+  }
+</style>
