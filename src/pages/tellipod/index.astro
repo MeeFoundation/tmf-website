@@ -44,23 +44,21 @@ import {themed} from '../../tellipod-theme';
 
         <div class="letter__body">
           <p class="tp-seq" style="--at: 1.7s; --fade: 0.5s; --y: 20px">
-            We are building Tellipod because we were tired of keeping our sensitive
-            personal information in unencrypted group chats and corporate cloud
-            drives.
+            We envision a world where small groups of people pursue common goals in spaces of their own, sharing what each goal needs and talking it through. These shared spaces live on members’ own devices rather than on a company’s servers, so no corporation can read or control what’s in them. 
           </p>
           <p class="tp-seq" style="--at: 2.05s; --fade: 0.5s; --y: 20px">
             We aren't backed by venture capital, and we don't sell your data. We're a
-            small independent team building the software we want our own families and
-            friends to use.
-          </p>
-          <p class="letter__ps tp-seq" style="--at: 2.4s; --fade: 0.5s; --y: 20px">
-            P.S. Tellipod is free and open source, so anyone can check that it works
-            the way we say it does.
+            small independent team building the software we want our own families, friends, and neighbors to use.
           </p>
         </div>
 
         <p class="letter__sign">
           <SplitText text="— The Tellipod team" start={3050} step={60.5} dur={93} />
+        </p>
+
+        <p class="letter__ps tp-seq" style="--at: 3.75s; --fade: 0.5s; --y: 20px">
+          P.S. Tellipod is free and open source, so anyone can check that it works
+          the way we say it does.
         </p>
 
         <footer class="letter__links">
@@ -212,9 +210,12 @@ import {themed} from '../../tellipod-theme';
     display: flex;
     flex-direction: column;
     gap: 28px;
+    color: var(--tp-body);
+  }
+  .letter__body,
+  .letter__ps {
     font-size: 24px;
     line-height: 32px;
-    color: var(--tp-body);
     letter-spacing: 0.005em;
   }
   .letter__ps {
@@ -282,7 +283,8 @@ import {themed} from '../../tellipod-theme';
     .letter__hi {
       font-size: 44px;
     }
-    .letter__body {
+    .letter__body,
+    .letter__ps {
       font-size: 20px;
       line-height: 30px;
     }
