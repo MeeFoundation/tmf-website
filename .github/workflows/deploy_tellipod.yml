@@ -1,0 +1,63 @@
+name: dev-ci-tellipod
+
+on:
+  workflow_dispatch:
+
+env:
+  GCP_PROJECT_ID: "the-mee-foundation"
+  GCP_BUCKET: "tellipod-mee-foundation-bucket"
+  TELLIPOD_HOST: "tellipod.mee.foundation"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build with Astro (standalone Tellipod)
+        env:
+          TELLIPOD_STANDALONE: "1"
+        run: yarn run build
+
+      - name: Assemble Tellipod site
+        run: |
+          mkdir -p site
+          cp -R dist/tellipod/. site/
+          cp -R dist/assets site/assets
+          cp dist/favicon* dist/apple-touch-icon.png dist/android-chrome-*.png dist/site.webmanifest dist/manifest.json site/
+          find site -type f | sort
+
+      - name: Configure GCP credentials
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "projects/1043231896197/locations/global/workloadIdentityPools/github-actions-pool/providers/global-github-deployment"
+          service_account: "global-github-actions@the-mee-foundation.iam.gserviceaccount.com"
+
+      - name: Set up Cloud SDK
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Deploy to bucket
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: |
+          gcloud storage rsync --recursive ./site gs://${{ env.GCP_BUCKET }}
+          gcloud storage objects update --content-type="text/html" --cache-control="public, max-age=60" --content-disposition="" gs://${{ env.GCP_BUCKET }}/*.html
+          gcloud storage objects update --content-type="text/html" --cache-control="public, max-age=60" --content-disposition="" gs://${{ env.GCP_BUCKET }}/*/*.html
+
+      - name: Invalidate CDN cache
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: |
+          gcloud compute url-maps invalidate-cdn-cache production-url-map --project ${{ env.GCP_PROJECT_ID }} --path "/*" --host ${{ env.TELLIPOD_HOST }} --async
