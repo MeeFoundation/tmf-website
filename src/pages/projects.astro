@@ -5,8 +5,8 @@ import extensionImageDark from '../assets/products/extension-dark.png';
 import extensionDesktopImageDark from '../assets/products/extension-desktop-dark.png';
 import extensionDesktopImage from '../assets/products/extension-desktop.png';
 import extensionImage from '../assets/products/extension.png';
-import smartwalletDarkImage from '../assets/products/smartwallet-dark.png';
-import smartwalletImage from '../assets/products/smartwallet.png';
+import tellipodDarkImage from '../assets/products/tellipod-dark.png';
+import tellipodImage from '../assets/products/tellipod.png';
 import ageVerifiedDarkImage from '../assets/products/age-protect-dark.png';
 import ageVerified from '../assets/products/age-protect.png';
 import mySignalImage from '../assets/products/handshake.png';
@@ -40,13 +40,14 @@ const extensionProduct = {
 };
 const products = [
   {
-    image: smartwalletImage,
-    imageDark: smartwalletDarkImage,
-    title: 'Identity Agent',
+    image: tellipodImage,
+    imageDark: tellipodDarkImage,
+    title: 'Tellipod app',
     label: 'Under development',
     description:
-      'Everyone has a right to an digital identity that can\'t be taken from them. An identity agent gives you one, keeps your personal data safe, and lets you share it privately with people you trust.',
-    link: 'https://smartwallet.mee.foundation',
+      'Gives every person a home for their personal information — one open only to those they invite, and owned by no corporation. In the Tellipod world, people are citizens of their own digital lives, not subjects of someone else’s platform.',
+    link: '/tellipod',
+    linkText: 'View details',
   },
   {
     image: ageVerified,
@@ -225,7 +226,7 @@ const collaborations = [
                       {project.description}
                     </div>
                     <div class="flex items-center gap-2.5 pb-0.5 pt-4 text-brand-700 dark:text-brand-300">
-                      <span class="underline">Learn more</span>
+                      <span class="underline">{project.linkText ?? 'Learn more'}</span>
                       <i class="bi bi-arrow-right" />
                     </div>
                   </div>
